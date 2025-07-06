@@ -18,15 +18,15 @@ const generateId = () => {
 // Middleware for input validation
 const validateBook = (req, res, next) => {
     const { title, author, isbn, publishedYear, genre } = req.body;
-    
+
     if (!title || title.trim().length === 0) {
         return res.status(400).json({ error: "Title is required" });
     }
-    
+
     if (!author || author.trim().length === 0) {
         return res.status(400).json({ error: "Author is required" });
     }
-    
+
     next();
 };
 
@@ -40,9 +40,9 @@ app.get("/api/books", (req, res) => {
             count: booksList.length
         });
     } catch (error) {
-        res.status(500).json({ 
-            success: false, 
-            error: "Failed to retrieve books" 
+        res.status(500).json({
+            success: false,
+            error: "Failed to retrieve books"
         });
     }
 });
@@ -52,22 +52,22 @@ app.get("/api/books/:id", (req, res) => {
     try {
         const { id } = req.params;
         const book = books.get(id);
-        
+
         if (!book) {
-            return res.status(404).json({ 
-                success: false, 
-                error: "Book not found" 
+            return res.status(404).json({
+                success: false,
+                error: "Book not found"
             });
         }
-        
+
         res.json({
             success: true,
             data: book
         });
     } catch (error) {
-        res.status(500).json({ 
-            success: false, 
-            error: "Failed to retrieve book" 
+        res.status(500).json({
+            success: false,
+            error: "Failed to retrieve book"
         });
     }
 });
@@ -76,7 +76,7 @@ app.get("/api/books/:id", (req, res) => {
 app.post("/api/books", validateBook, (req, res) => {
     try {
         const { title, author, isbn, publishedYear, genre, description } = req.body;
-        
+
         const newBook = {
             id: generateId(),
             title: title.trim(),
@@ -88,18 +88,18 @@ app.post("/api/books", validateBook, (req, res) => {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
-        
+
         books.set(newBook.id, newBook);
-        
+
         res.status(201).json({
             success: true,
             data: newBook,
             message: "Book created successfully"
         });
     } catch (error) {
-        res.status(500).json({ 
-            success: false, 
-            error: "Failed to create book" 
+        res.status(500).json({
+            success: false,
+            error: "Failed to create book"
         });
     }
 });
@@ -109,14 +109,14 @@ app.put("/api/books/:id", validateBook, (req, res) => {
     try {
         const { id } = req.params;
         const { title, author, isbn, publishedYear, genre, description } = req.body;
-        
+
         if (!books.has(id)) {
-            return res.status(404).json({ 
-                success: false, 
-                error: "Book not found" 
+            return res.status(404).json({
+                success: false,
+                error: "Book not found"
             });
         }
-        
+
         const updatedBook = {
             id,
             title: title.trim(),
@@ -128,18 +128,18 @@ app.put("/api/books/:id", validateBook, (req, res) => {
             createdAt: books.get(id).createdAt,
             updatedAt: new Date().toISOString()
         };
-        
+
         books.set(id, updatedBook);
-        
+
         res.json({
             success: true,
             data: updatedBook,
             message: "Book updated successfully"
         });
     } catch (error) {
-        res.status(500).json({ 
-            success: false, 
-            error: "Failed to update book" 
+        res.status(500).json({
+            success: false,
+            error: "Failed to update book"
         });
     }
 });
@@ -149,14 +149,14 @@ app.patch("/api/books/:id", (req, res) => {
     try {
         const { id } = req.params;
         const updates = req.body;
-        
+
         if (!books.has(id)) {
-            return res.status(404).json({ 
-                success: false, 
-                error: "Book not found" 
+            return res.status(404).json({
+                success: false,
+                error: "Book not found"
             });
         }
-        
+
         const existingBook = books.get(id);
         const updatedBook = {
             ...existingBook,
@@ -165,27 +165,27 @@ app.patch("/api/books/:id", (req, res) => {
             createdAt: existingBook.createdAt, // Preserve creation date
             updatedAt: new Date().toISOString()
         };
-        
+
         // Validate required fields if they're being updated
         if (updates.title !== undefined && (!updates.title || updates.title.trim().length === 0)) {
             return res.status(400).json({ error: "Title cannot be empty" });
         }
-        
+
         if (updates.author !== undefined && (!updates.author || updates.author.trim().length === 0)) {
             return res.status(400).json({ error: "Author cannot be empty" });
         }
-        
+
         books.set(id, updatedBook);
-        
+
         res.json({
             success: true,
             data: updatedBook,
             message: "Book updated successfully"
         });
     } catch (error) {
-        res.status(500).json({ 
-            success: false, 
-            error: "Failed to update book" 
+        res.status(500).json({
+            success: false,
+            error: "Failed to update book"
         });
     }
 });
@@ -194,26 +194,26 @@ app.patch("/api/books/:id", (req, res) => {
 app.delete("/api/books/:id", (req, res) => {
     try {
         const { id } = req.params;
-        
+
         if (!books.has(id)) {
-            return res.status(404).json({ 
-                success: false, 
-                error: "Book not found" 
+            return res.status(404).json({
+                success: false,
+                error: "Book not found"
             });
         }
-        
+
         const deletedBook = books.get(id);
         books.delete(id);
-        
+
         res.json({
             success: true,
             data: deletedBook,
             message: "Book deleted successfully"
         });
     } catch (error) {
-        res.status(500).json({ 
-            success: false, 
-            error: "Failed to delete book" 
+        res.status(500).json({
+            success: false,
+            error: "Failed to delete book"
         });
     }
 });
@@ -223,43 +223,44 @@ app.delete("/api/books", (req, res) => {
     try {
         const booksCount = books.size;
         books.clear();
-        
+
         res.json({
             success: true,
             message: `All ${booksCount} books deleted successfully`
         });
     } catch (error) {
-        res.status(500).json({ 
-            success: false, 
-            error: "Failed to delete books" 
+        res.status(500).json({
+            success: false,
+            error: "Failed to delete books"
         });
     }
 });
 
 // Search books by title or author
-app.get("/api/books/search/:query", (req, res) => {
-    try {
-        const { query } = req.params;
-        const searchTerm = query.toLowerCase();
-        
-        const filteredBooks = Array.from(books.values()).filter(book => 
-            book.title.toLowerCase().includes(searchTerm) ||
-            book.author.toLowerCase().includes(searchTerm)
-        );
-        
-        res.json({
-            success: true,
-            data: filteredBooks,
-            count: filteredBooks.length,
-            searchTerm: query
-        });
-    } catch (error) {
-        res.status(500).json({ 
-            success: false, 
-            error: "Failed to search books" 
+app.get("/api/books/search/:query?", (req, res) => {
+    const { query } = req.params;
+
+    if (!query || query.trim() === "") {
+        return res.status(400).json({
+            success: false,
+            error: "Search query is required"
         });
     }
+
+    const searchTerm = query.toLowerCase();
+    const filteredBooks = Array.from(books.values()).filter(book =>
+        book.title.toLowerCase().includes(searchTerm) ||
+        book.author.toLowerCase().includes(searchTerm)
+    );
+
+    res.json({
+        success: true,
+        data: filteredBooks,
+        count: filteredBooks.length,
+        searchTerm: query
+    });
 });
+
 
 // 404 handler for undefined routes
 app.use("*", (req, res) => {
