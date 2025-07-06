@@ -237,17 +237,17 @@ app.delete("/api/books", (req, res) => {
 });
 
 // Search books by title or author
-app.get("/api/books/search/:query?", (req, res) => {
-    const { query } = req.params;
+app.get("/api/books/search", (req, res) => {
+    const { q } = req.query;
 
-    if (!query || query.trim() === "") {
+    if (!q || q.trim() === "") {
         return res.status(400).json({
             success: false,
             error: "Search query is required"
         });
     }
 
-    const searchTerm = query.toLowerCase();
+    const searchTerm = q.toLowerCase();
     const filteredBooks = Array.from(books.values()).filter(book =>
         book.title.toLowerCase().includes(searchTerm) ||
         book.author.toLowerCase().includes(searchTerm)
@@ -257,7 +257,7 @@ app.get("/api/books/search/:query?", (req, res) => {
         success: true,
         data: filteredBooks,
         count: filteredBooks.length,
-        searchTerm: query
+        searchTerm: q
     });
 });
 
