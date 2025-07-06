@@ -237,48 +237,48 @@ app.delete("/api/books", (req, res) => {
 });
 
 // Search books by title or author
-app.get("/api/books/search", (req, res) => {
-    const { q } = req.query;
+// app.get("/api/books/search", (req, res) => {
+//     const { q } = req.query;
 
-    if (!q || q.trim() === "") {
-        return res.status(400).json({
-            success: false,
-            error: "Search query is required"
-        });
-    }
+//     if (!q || q.trim() === "") {
+//         return res.status(400).json({
+//             success: false,
+//             error: "Search query is required"
+//         });
+//     }
 
-    const searchTerm = q.toLowerCase();
-    const filteredBooks = Array.from(books.values()).filter(book =>
-        book.title.toLowerCase().includes(searchTerm) ||
-        book.author.toLowerCase().includes(searchTerm)
-    );
+//     const searchTerm = q.toLowerCase();
+//     const filteredBooks = Array.from(books.values()).filter(book =>
+//         book.title.toLowerCase().includes(searchTerm) ||
+//         book.author.toLowerCase().includes(searchTerm)
+//     );
 
-    res.json({
-        success: true,
-        data: filteredBooks,
-        count: filteredBooks.length,
-        searchTerm: q
-    });
-});
+//     res.json({
+//         success: true,
+//         data: filteredBooks,
+//         count: filteredBooks.length,
+//         searchTerm: q
+//     });
+// });
 
 
 // 404 handler for undefined routes
-app.use("*", (req, res) => {
-    res.status(404).json({
-        success: false,
-        error: "Route not found",
-        message: `Cannot ${req.method} ${req.originalUrl}`
-    });
-});
+// app.use("*", (req, res) => {
+//     res.status(404).json({
+//         success: false,
+//         error: "Route not found",
+//         message: `Cannot ${req.method} ${req.originalUrl}`
+//     });
+// });
 
 // Global error handler
-app.use((error, req, res, next) => {
-    console.error(error.stack);
-    res.status(500).json({
-        success: false,
-        error: "Internal server error"
-    });
-});
+// app.use((error, req, res, next) => {
+//     console.error(error.stack);
+//     res.status(500).json({
+//         success: false,
+//         error: "Internal server error"
+//     });
+// });
 
 const PORT = process.env.PORT || 3000;
 
